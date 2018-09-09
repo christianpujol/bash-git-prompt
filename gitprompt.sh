@@ -278,7 +278,7 @@ function git_prompt_config() {
   if [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     EMPTY_PROMPT="$OLD_GITPROMPT"
   else
-    local ps="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$PROMPT_END"
+    local ps="$(gp_add_virtualenv_to_prompt)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$PROMPT_END"
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
@@ -580,7 +580,7 @@ function updatePrompt() {
     fi
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
+    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
   else
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
@@ -608,7 +608,13 @@ function gp_add_virtualenv_to_prompt {
   fi
   echo "$ACCUMULATED_VENV_PROMPT"
 }
-
+# Helper Function that returns loaded env modules
+function gp_add_loaded_modules {
+  if [[ -n "$LOADEDMODULES" ]]; then
+     local LOADED="\[\033[31m\](loaded: $(echo "$LOADEDMODULES" | sed 's/:/ /g'))\[\033[00m\] "
+  fi
+  echo "$LOADED"
+}
 # Use exit status from declare command to determine whether input argument is a
 # bash function
 function is_function {
