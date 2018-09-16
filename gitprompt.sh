@@ -278,7 +278,7 @@ function git_prompt_config() {
   if [[ "$GIT_PROMPT_ONLY_IN_REPO" = 1 ]]; then
     EMPTY_PROMPT="$OLD_GITPROMPT"
   else
-    local ps="$(gp_add_virtualenv_to_prompt)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$PROMPT_END"
+    local ps="$(gp_add_virtualenv_to_prompt)$(gp_add_node_version)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$PROMPT_END"
     EMPTY_PROMPT="${ps//_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
   fi
 
@@ -580,7 +580,7 @@ function updatePrompt() {
     fi
     __add_status        "$ResetColor$GIT_PROMPT_SUFFIX"
 
-    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
+    NEW_PROMPT="$(gp_add_virtualenv_to_prompt)$(gp_add_node_version)$(gp_add_loaded_modules)$PROMPT_START$($prompt_callback)$STATUS_PREFIX$STATUS$PROMPT_END"
   else
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
@@ -607,6 +607,11 @@ function gp_add_virtualenv_to_prompt {
     ACCUMULATED_VENV_PROMPT="${ACCUMULATED_VENV_PROMPT}${GIT_PROMPT_VIRTUALENV//_VIRTUALENV_/${VENV}}"
   fi
   echo "$ACCUMULATED_VENV_PROMPT"
+}
+# Helper Function that return node version in use
+function gp_add_node_version {
+  NODE_V="\[\033[1;36m\033[45m\]{node: $(node --version)}\[\033[00m\] "
+  echo "$NODE_V"
 }
 # Helper Function that returns loaded env modules
 function gp_add_loaded_modules {
